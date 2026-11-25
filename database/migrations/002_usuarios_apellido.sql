@@ -1,0 +1,2 @@
+ALTER TABLE usuarios
+  ADD COLUMN apellido VARCHAR(100) NOT NULL DEFAULT '' AFTER nombre;

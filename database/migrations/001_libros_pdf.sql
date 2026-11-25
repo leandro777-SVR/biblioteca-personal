@@ -1,0 +1,3 @@
+ALTER TABLE libros
+  ADD COLUMN pdf_nombre VARCHAR(255) NULL,
+  ADD COLUMN pdf_contenido LONGBLOB NULL;

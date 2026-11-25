@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Guía de estudio y exposición de la API REST del proyecto Biblioteca.">
+  <title>Guía de exposición · API Biblioteca</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d2b37;
+      --muted: #536574;
+      --paper: #f4f7f8;
+      --card: #fff;
+      --line: #d8e1e6;
+      --blue: #145a78;
+      --blue-soft: #e7f2f7;
+      --green: #17684d;
+      --amber: #80540a;
+      --code: #14232e;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--paper); line-height: 1.65; }
+    header { background: linear-gradient(125deg, #123f59, #197395); color: #fff; padding: 3.2rem max(1.2rem, calc((100% - 1080px) / 2)); }
+    header .eyebrow { text-transform: uppercase; letter-spacing: .13em; font-size: .78rem; opacity: .83; font-weight: 700; }
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; margin: .55rem 0 1rem; }
+    header p { max-width: 760px; font-size: 1.08rem; margin: 0; color: #e3f2f7; }
+    .toolbar { max-width: 1080px; margin: 1rem auto 0; padding: 0 1.2rem; display: flex; justify-content: flex-end; gap: .7rem; }
+    button, .button { border: 0; border-radius: 7px; padding: .7rem 1rem; font: inherit; font-weight: 700; cursor: pointer; text-decoration: none; }
+    button { color: #fff; background: var(--blue); }
+    button:hover { background: #0c425b; }
+    main { max-width: 1080px; margin: 1rem auto 4rem; padding: 0 1.2rem; }
+    nav, section, .callout { background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+    nav { padding: 1.25rem 1.5rem; margin-bottom: 1.4rem; }
+    nav strong { display: block; margin-bottom: .6rem; }
+    nav ul { display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; padding: 0; margin: 0; list-style: none; }
+    a { color: var(--blue); }
+    nav a { font-weight: 600; }
+    section { padding: clamp(1.1rem, 3vw, 2rem); margin: 1.3rem 0; scroll-margin-top: 1rem; }
+    h2 { font-size: 1.65rem; margin: 0 0 .65rem; line-height: 1.25; }
+    h3 { font-size: 1.14rem; margin: 1.5rem 0 .35rem; }
+    p { margin: .55rem 0; }
+    .lead { color: var(--muted); font-size: 1.06rem; margin-top: 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(225px, 1fr)); gap: .9rem; margin-top: 1rem; }
+    .tile { border: 1px solid var(--line); border-radius: 9px; padding: 1rem; background: #fbfdfe; }
+    .tile strong { color: var(--blue); display: block; margin-bottom: .25rem; }
+    .callout { padding: 1rem 1.2rem; margin: 1rem 0; border-left: 5px solid var(--blue); }
+    .callout.warning { border-left-color: #bd8114; background: #fffaf0; }
+    .callout.success { border-left-color: #25815f; background: #f2fbf6; }
+    .tree, code, pre { font-family: Consolas, "Courier New", monospace; }
+    .tree { background: var(--code); color: #e5f1f5; padding: 1.15rem; border-radius: 9px; overflow-x: auto; line-height: 1.55; font-size: .91rem; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--code); color: #e5f1f5; padding: 1rem 1.15rem; border-radius: 9px; font-size: .92rem; }
+    code { background: #edf2f5; border-radius: 4px; padding: .1rem .3rem; font-size: .93em; }
+    pre code { background: none; padding: 0; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .94rem; }
+    th, td { padding: .7rem .75rem; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--blue-soft); }
+    td:first-child { white-space: nowrap; }
+    .tag { display: inline-block; border-radius: 999px; padding: .1rem .55rem; background: var(--blue-soft); color: var(--blue); font-size: .82rem; font-weight: 700; }
+    .steps { counter-reset: step; list-style: none; padding: 0; }
+    .steps li { counter-increment: step; padding: .3rem 0 .75rem 2.7rem; position: relative; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: .15rem; width: 1.9rem; height: 1.9rem; border-radius: 50%; display: grid; place-items: center; color: #fff; background: var(--blue); font-weight: 700; }
+    details { border-top: 1px solid var(--line); padding: .8rem 0; }
+    details:last-child { border-bottom: 1px solid var(--line); }
+    summary { cursor: pointer; font-weight: 700; }
+    footer { color: var(--muted); text-align: center; padding: 1.5rem; font-size: .9rem; }
+    @media (max-width: 650px) {
+      header { padding-top: 2.3rem; padding-bottom: 2.3rem; }
+      table { display: block; overflow-x: auto; }
+      td:first-child { white-space: normal; }
+    }
+    @media print {
+      body { background: #fff; font-size: 10.5pt; }
+      header { padding: 1.5rem; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      main { max-width: none; margin: 0; padding: 0; }
+      .toolbar, nav { display: none; }
+      section, .callout { break-inside: avoid; box-shadow: none; }
+      a { color: inherit; text-decoration: none; }
+      pre, .tree { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">Biblioteca · material para exposición</div>
+    <h1>Guía de estudio de la API</h1>
+    <p>Un recorrido sencillo para explicar qué hace el servidor y cómo se conecta con la aplicación web. Incluye analogías con una biblioteca física y ejemplos basados en el código de <code>api/</code>.</p>
+  </header>
+  <div class="toolbar">
+    <button type="button" onclick="window.print()">Imprimir o guardar como PDF</button>
+  </div>
+  <main>
+    <nav aria-label="Índice de contenidos">
+      <strong>En esta guía</strong>
+      <ul>
+        <li><a href="#resumen">Resumen</a></li>
+        <li><a href="#recorrido">Recorrido de una petición</a></li>
+        <li><a href="#estructura">Carpetas y archivos</a></li>
+        <li><a href="#rutas">Rutas disponibles</a></li>
+        <li><a href="#conexion">Conexión con web</a></li>
+        <li><a href="#seguridad">Validación y seguridad</a></li>
+        <li><a href="#exposicion">Cómo presentarlo</a></li>
+        <li><a href="#preguntas">Preguntas del profesor</a></li>
+      </ul>
+    </nav>
+
+    <section id="resumen">
+      <h2>1. ¿Qué es esta API?</h2>
+      <p class="lead">Es el servidor backend que recibe solicitudes HTTP, aplica reglas del proyecto, consulta MySQL y devuelve respuestas al cliente.</p>
+      <div class="grid">
+        <div class="tile"><strong>Express</strong>Define el servidor, el middleware y las rutas REST.</div>
+        <div class="tile"><strong>MySQL</strong>Guarda usuarios, autores y libros. Las consultas se ejecutan mediante el pool de <code>mysql2/promise</code>.</div>
+        <div class="tile"><strong>JWT + bcrypt</strong>Autentica sesiones con tokens firmados y almacena contraseñas como hashes.</div>
+        <div class="tile"><strong>PDF</strong>Recibe archivos en memoria, revisa el formato y permite servir el PDF o generar una vista previa de hasta 30 páginas.</div>
+      </div>
+      <div class="callout success"><strong>Idea para abrir la exposición:</strong> “La web es la interfaz; la API es el intermediario que valida las operaciones, controla el acceso y comunica la aplicación con la base de datos”.</div>
+      <h3>Una analogía: pedir un libro en una biblioteca</h3>
+      <p>Imaginemos que la aplicación es una biblioteca física. La persona no entra al archivo donde se guardan los libros: hace un pedido en el mostrador. La API cumple ese papel de intermediaria entre quien pide algo y los datos guardados.</p>
+      <table>
+        <thead><tr><th>En el proyecto</th><th>En la biblioteca</th><th>Qué significa</th></tr></thead>
+        <tbody>
+          <tr><td>Frontend (web)</td><td>La persona que hace el pedido</td><td>Presenta una solicitud y muestra el resultado.</td></tr>
+          <tr><td>API / Express</td><td>El mostrador de atención</td><td>Recibe solicitudes HTTP y devuelve respuestas.</td></tr>
+          <tr><td>Ruta</td><td>El cartel que indica a qué ventanilla ir</td><td>Relaciona un método y una URL, por ejemplo <code>GET /api/libros</code>, con una operación.</td></tr>
+          <tr><td>Middleware</td><td>La revisión de la credencial antes de pasar</td><td>Puede verificar el token o procesar un PDF antes de que llegue al controlador.</td></tr>
+          <tr><td>Controlador</td><td>La persona del mostrador que entiende el pedido</td><td>Valida los datos, aplica las reglas y coordina qué hacer.</td></tr>
+          <tr><td>Modelo</td><td>Quien busca o actualiza la ficha en el archivo</td><td>Ejecuta las consultas para leer o cambiar datos.</td></tr>
+          <tr><td>MySQL</td><td>El archivo de fichas de la biblioteca</td><td>Guarda de forma persistente usuarios, autores y libros.</td></tr>
+          <tr><td>JSON</td><td>Un formulario ordenado con los datos del pedido</td><td>Es el formato habitual para enviar datos y recibir resultados.</td></tr>
+          <tr><td>JWT</td><td>Una credencial temporal de socio</td><td>Permite identificar al usuario en rutas protegidas; no es la contraseña ni contiene sus libros.</td></tr>
+        </tbody>
+      </table>
+      <h3>Los métodos HTTP como acciones en el mostrador</h3>
+      <ul>
+        <li><code>GET</code>: consultar el catálogo o pedir que te muestren tus libros; no modifica los datos.</li>
+        <li><code>POST</code>: entregar una ficha nueva para registrar, como crear un libro.</li>
+        <li><code>PUT</code>: reemplazar o actualizar los datos principales de una ficha.</li>
+        <li><code>PATCH</code>: cambiar solo un dato concreto, como el estado del libro.</li>
+        <li><code>DELETE</code>: pedir que se elimine una ficha propia.</li>
+      </ul>
+      <div class="callout warning"><strong>Ojo con la analogía:</strong> CORS se parece a una regla que indica desde qué lugares el navegador acepta pedidos, pero no comprueba quién es el usuario. La credencial JWT y las reglas de propiedad hacen esa comprobación.</div>
+    </section>
+
+    <section id="recorrido">
+      <h2>2. Recorrido de una petición</h2>
+      <ol class="steps">
+        <li>El cliente envía una petición HTTP a una dirección como <code>http://localhost:3000/api/libros</code>, con método, ruta y datos.</li>
+        <li><code>src/app.js</code> aplica CORS, interpreta JSON y deriva la petición al grupo de rutas correspondiente.</li>
+        <li>Las rutas deciden qué middleware y controlador ejecutar. Las de autores, libros y catálogo exigen token.</li>
+        <li>El middleware de autenticación verifica el JWT y deja la identidad en <code>req.usuario</code>.</li>
+        <li>El controlador valida y coordina la operación; el modelo ejecuta consultas parametrizadas mediante el pool MySQL.</li>
+        <li>Express responde con JSON, un PDF o un estado HTTP. Los errores no atendidos pasan al manejador central.</li>
+      </ol>
+      <pre><code>Cliente web → CORS / JSON → Ruta → Autenticación → Controlador
+           → Modelo → Pool MySQL → respuesta HTTP</code></pre>
+      <div class="callout">
+        <strong>Ejemplo real: pedir los libros pendientes.</strong> La web hace <code>GET /api/libros?estado=pendiente</code> y adjunta <code>Authorization: Bearer &lt;token&gt;</code>. Como si mostrara su credencial en el mostrador, primero pasa por la ruta protegida y el middleware verifica el JWT. Después, el controlador revisa el filtro, el modelo busca en MySQL solo los libros de ese usuario que están pendientes y la API devuelve la lista en JSON con estado <code>200</code>. Sin una credencial válida, la solicitud se rechaza con <code>401</code>.
+      </div>
+      <p>Para un archivo, la ruta de libros agrega <code>multer</code>: recibe el campo <code>archivo_pdf</code> como multipart, valida límites y luego el controlador prepara el contenido.</p>
+    </section>
+
+    <section id="estructura">
+      <h2>3. Mapa completo de <code>api/</code></h2>
+      <pre class="tree"><code>api/
+├── package.json
+└── src/
+    ├── app.js
+    ├── server.js
+    ├── config/
+    │   └── db.js
+    ├── controllers/
+    │   ├── auth.controller.js
+    │   ├── autores.controller.js
+    │   └── libros.controller.js
+    ├── middlewares/
+    │   ├── errores.js
+    │   ├── requiereAutenticacion.js
+    │   └── subirPdf.js
+    ├── models/
+    │   ├── autores.model.js
+    │   ├── libros.model.js
+    │   └── usuarios.model.js
+    ├── routes/
+    │   ├── auth.routes.js
+    │   ├── autores.routes.js
+    │   ├── catalogo.routes.js
+    │   └── libros.routes.js
+    └── utils/
+        ├── pdf.js
+        ├── pdf.test.js
+        └── validaciones.js</code></pre>
+
+      <h3>Arranque y configuración</h3>
+      <ul>
+        <li><code>package.json</code>: define dependencias y comandos <code>npm start</code>, <code>npm run dev</code> y <code>npm test</code>.</li>
+        <li><code>src/server.js</code>: carga variables de entorno, exige <code>JWT_SECRET</code> y levanta Express en <code>PORT</code> (por defecto 3000).</li>
+        <li><code>src/app.js</code>: crea la aplicación, configura CORS y JSON, expone <code>GET /api/salud</code>, monta las rutas y deja al final los manejadores de 404 y errores.</li>
+        <li><code>src/config/db.js</code>: configura un pool MySQL reutilizable con host, puerto, usuario, contraseña y base definidos por variables de entorno. El límite de conexiones es 10.</li>
+      </ul>
+
+      <h3>Rutas y lógica de negocio</h3>
+      <ul>
+        <li><code>src/routes/auth.routes.js</code>: conecta registro e inicio de sesión con sus controladores; no exige un token previo.</li>
+        <li><code>src/routes/autores.routes.js</code>: protege todas las rutas de autores y registra listar, crear y eliminar.</li>
+        <li><code>src/routes/libros.routes.js</code>: protege la biblioteca privada y asigna los métodos de consulta, alta, edición, cambio de estado, eliminación y PDF.</li>
+        <li><code>src/routes/catalogo.routes.js</code>: define listado, vista previa y descarga del material compartido. <strong>En el código actual también aplica autenticación JWT</strong>, aunque los libros sean compartidos.</li>
+        <li><code>src/controllers/auth.controller.js</code>: valida registro/login, cifra contraseñas con bcrypt y emite JWT de dos horas.</li>
+        <li><code>src/controllers/autores.controller.js</code>: valida autores y evita borrar uno que todavía tiene libros cargados.</li>
+        <li><code>src/controllers/libros.controller.js</code>: concentra validaciones, permisos, filtros, acciones CRUD y respuesta de PDF/catálogo.</li>
+      </ul>
+
+      <h3>Acceso a datos, middleware y utilidades</h3>
+      <ul>
+        <li><code>src/models/usuarios.model.js</code>: inserta usuarios y busca una cuenta por email.</li>
+        <li><code>src/models/autores.model.js</code>: lista, consulta, crea y elimina autores; las operaciones privadas filtran por usuario.</li>
+        <li><code>src/models/libros.model.js</code>: consulta y modifica libros, arma filtros parametrizados y separa las lecturas privadas de las lecturas de catálogo.</li>
+        <li><code>src/middlewares/requiereAutenticacion.js</code>: exige <code>Authorization: Bearer &lt;token&gt;</code>, verifica firma/vencimiento y carga <code>req.usuario</code>.</li>
+        <li><code>src/middlewares/subirPdf.js</code>: limita la carga a un PDF, un archivo y 10 MB; lo conserva temporalmente en memoria.</li>
+        <li><code>src/middlewares/errores.js</code>: convierte errores conocidos en respuestas HTTP claras y oculta los detalles internos en errores 500.</li>
+        <li><code>src/utils/validaciones.js</code>: centraliza estados permitidos, limpieza de texto, verificación básica de email y parseo de IDs.</li>
+        <li><code>src/utils/pdf.js</code>: comprueba extensión y firma del PDF y genera una vista previa de hasta 30 páginas.</li>
+        <li><code>src/utils/pdf.test.js</code>: pruebas automatizadas de preparación, rechazo de archivos inválidos y límites de la vista previa.</li>
+      </ul>
+    </section>
+
+    <section id="rutas">
+      <h2>4. Principales endpoints</h2>
+      <p>La base común es <code>/api</code>. Salvo salud y autenticación, las rutas de esta tabla requieren <code>Authorization: Bearer &lt;token&gt;</code>. Los errores de validación devuelven JSON.</p>
+      <table>
+        <thead><tr><th>Método y ruta</th><th>Acceso</th><th>Qué hace</th></tr></thead>
+        <tbody>
+          <tr><td><code>GET /api/salud</code></td><td>Sin token</td><td>Comprueba que el servidor responde con <code>{ "ok": true }</code>.</td></tr>
+          <tr><td><code>POST /api/auth/registro</code></td><td>Sin token</td><td>Crea usuario; responde 201 con usuario y token. Valida nombre, apellido, email y contraseña.</td></tr>
+          <tr><td><code>POST /api/auth/login</code></td><td>Sin token</td><td>Compara la contraseña con bcrypt; responde con usuario y JWT o 401.</td></tr>
+          <tr><td><code>GET /api/autores</code></td><td>JWT</td><td>Lista los autores del usuario autenticado.</td></tr>
+          <tr><td><code>POST /api/autores</code></td><td>JWT</td><td>Crea un autor; 201 si se guardó.</td></tr>
+          <tr><td><code>DELETE /api/autores/:id</code></td><td>JWT</td><td>Elimina el autor solo si es del usuario y no tiene libros; 204 si se eliminó.</td></tr>
+          <tr><td><code>GET /api/libros?buscar=&amp;estado=&amp;autor_id=</code></td><td>JWT</td><td>Lista libros propios con filtros opcionales; los estados válidos son <code>leido</code>, <code>pendiente</code> y <code>prestado</code>.</td></tr>
+          <tr><td><code>GET /api/libros/:id</code></td><td>JWT</td><td>Devuelve el detalle de un libro propio.</td></tr>
+          <tr><td><code>POST /api/libros</code></td><td>JWT + multipart opcional</td><td>Crea un libro; el PDF viaja en el campo <code>archivo_pdf</code>.</td></tr>
+          <tr><td><code>PUT /api/libros/:id</code></td><td>JWT + multipart opcional</td><td>Actualiza los datos del libro y, si llega uno, su PDF.</td></tr>
+          <tr><td><code>PATCH /api/libros/:id/estado</code></td><td>JWT</td><td>Actualiza únicamente el estado.</td></tr>
+          <tr><td><code>GET /api/libros/:id/preview</code></td><td>JWT</td><td>Sirve una vista previa PDF de hasta 30 páginas.</td></tr>
+          <tr><td><code>GET /api/libros/:id/pdf</code></td><td>JWT</td><td>Descarga el PDF completo del libro propio.</td></tr>
+          <tr><td><code>DELETE /api/libros/:id</code></td><td>JWT</td><td>Elimina un libro propio; responde 204 si se eliminó.</td></tr>
+          <tr><td><code>GET /api/catalogo</code></td><td>JWT</td><td>Lista libros marcados para compartir, con búsqueda opcional.</td></tr>
+          <tr><td><code>GET /api/catalogo/:id/preview</code></td><td>JWT</td><td>Entrega una vista previa de un PDF publicado.</td></tr>
+          <tr><td><code>GET /api/catalogo/:id/pdf</code></td><td>JWT</td><td>Descarga completa solo si se habilitó <code>descarga_publica</code>.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout warning"><strong>Distinción importante:</strong> “compartido” indica que el libro fue publicado para aparecer en el catálogo, pero no vuelve anónimos estos endpoints. Las tres rutas de catálogo están detrás de <code>requiereAutenticacion</code>; la descarga completa, además, requiere permiso declarado.</div>
+    </section>
+
+    <section id="conexion">
+      <h2>5. ¿Qué permite la conexión con la carpeta web?</h2>
+      <p>La comunicación es una integración cliente-servidor sobre HTTP, no una importación directa de código entre carpetas. La web realiza solicitudes a la API; Express procesa esas solicitudes y contesta.</p>
+      <ol>
+        <li><strong>Servidor levantado:</strong> <code>server.js</code> escucha en <code>PORT</code>, que por defecto es <code>3000</code>.</li>
+        <li><strong>Dirección conocida por el cliente:</strong> el cliente debe enviar sus solicitudes a la URL de la API, por ejemplo <code>http://localhost:3000</code> en desarrollo. La ubicación donde el frontend configura esa URL no forma parte del código de <code>api/</code>.</li>
+        <li><strong>CORS:</strong> <code>app.js</code> permite por defecto el origen <code>http://localhost:5173</code>, o el valor de <code>FRONTEND_URL</code>. También permite los métodos HTTP usados por la API y las cabeceras <code>Content-Type</code> y <code>Authorization</code>. Esto permite al navegador aceptar la comunicación entre distintos orígenes.</li>
+        <li><strong>Formato acordado:</strong> JSON para la mayoría de operaciones; multipart con el campo <code>archivo_pdf</code> para subir un PDF; respuesta binaria PDF para vistas previas y descargas.</li>
+        <li><strong>Sesión:</strong> tras registro/login el cliente recibe un JWT y debe enviarlo como <code>Authorization: Bearer ...</code> en los endpoints protegidos.</li>
+        <li><strong>Datos persistentes:</strong> la API requiere que MySQL esté configurado y accesible con las variables de conexión del pool.</li>
+      </ol>
+      <pre><code>Variables relevantes:
+PORT=3000
+FRONTEND_URL=http://localhost:5173
+JWT_SECRET=un_secreto_configurado_localmente
+DB_HOST=...
+DB_PORT=3306
+DB_USER=...
+DB_PASSWORD=...
+DB_NAME=...</code></pre>
+      <p>El archivo de configuración está preparado para leer variables de entorno, pero los valores concretos deben estar disponibles en el entorno de ejecución. No se debe compartir ni publicar el secreto JWT ni la contraseña de la base de datos.</p>
+      <div class="callout"><strong>CORS no es autenticación:</strong> CORS regula qué orígenes de navegador pueden leer respuestas. El control de identidad y acceso lo hace el JWT verificado por el middleware, junto con los filtros de propietario en las consultas.</div>
+      <p><strong>Alcance de esta guía:</strong> se inspeccionó únicamente la carpeta <code>api/</code>. Por eso se explica el contrato que la API ofrece, pero no se afirma qué URL, cabeceras o llamadas usa concretamente el código de la web.</p>
+    </section>
+
+    <section id="seguridad">
+      <h2>6. Reglas de seguridad y validación para explicar</h2>
+      <ul>
+        <li><strong>Contraseñas:</strong> bcrypt guarda un hash, no la contraseña original; en login compara el valor ingresado contra ese hash.</li>
+        <li><strong>JWT:</strong> incluye id y email, no contraseña, y expira a las dos horas. El servidor necesita el mismo <code>JWT_SECRET</code> para firmar y verificar.</li>
+        <li><strong>Separación de datos:</strong> las consultas privadas de libros y autores filtran por <code>usuario_id</code>; los controladores usan el id obtenido del token. Los IDs de otros usuarios se tratan como no encontrados.</li>
+        <li><strong>SQL parametrizado:</strong> las consultas usan <code>pool.execute</code> y marcadores <code>?</code> para separar valores de la instrucción SQL.</li>
+        <li><strong>Validación:</strong> se validan campos, IDs y estados permitidos antes de guardar. La API responde errores 400/404/409/401 según el caso.</li>
+        <li><strong>PDF:</strong> Multer limita a un archivo y 10 MB; se comprueban extensión y firma PDF. Las vistas previas se limitan a 30 páginas.</li>
+        <li><strong>Errores:</strong> el middleware devuelve mensajes controlados; en errores inesperados registra el detalle en el servidor y devuelve un 500 genérico.</li>
+      </ul>
+      <p>El gestor de errores también reconoce JSON inválido, límites de carga, errores de PDF y conflictos de base de datos para traducirlos en estados HTTP coherentes.</p>
+    </section>
+
+    <section id="exposicion">
+      <h2>7. Guion sugerido para presentar al profesor</h2>
+      <ol class="steps">
+        <li><strong>Presentar el propósito:</strong> “Esta API centraliza el acceso a la biblioteca y evita que la interfaz manipule directamente la base de datos”.</li>
+        <li><strong>Mostrar el arranque:</strong> explicar <code>server.js</code>, <code>app.js</code>, variables de entorno, puerto y endpoint de salud.</li>
+        <li><strong>Seguir una operación sencilla:</strong> mostrar una ruta, su controlador y el modelo correspondiente. Por ejemplo, listar autores: ruta protegida → verificación JWT → controlador → modelo con filtro por usuario.</li>
+        <li><strong>Explicar una operación protegida:</strong> login emite JWT; el cliente lo envía como Bearer; el middleware lo verifica y el controlador opera con <code>req.usuario.id</code>.</li>
+        <li><strong>Explicar alta de libro y PDF:</strong> ruta → Multer → validaciones del controlador → preparación del PDF → modelo/SQL → respuesta. Aclarar el límite de 10 MB y el campo de archivo.</li>
+        <li><strong>Terminar con los límites de acceso:</strong> cada usuario solo accede a sus datos, las consultas están parametrizadas y el catálogo exige autenticación según la configuración actual.</li>
+      </ol>
+      <h3>Comprobaciones rápidas para una demostración</h3>
+      <ul>
+        <li>Arrancar desde la carpeta <code>api/</code> con <code>npm run dev</code> o <code>npm start</code>, con variables de entorno y MySQL preparados.</li>
+        <li>Probar <code>GET /api/salud</code>: la respuesta esperada es <code>{"ok":true}</code>.</li>
+        <li>Registrar o iniciar sesión y observar que la respuesta incluye token y usuario.</li>
+        <li>Invocar una ruta protegida sin token para mostrar el 401; repetir con Bearer para explicar el flujo autenticado.</li>
+        <li>Si se demuestra carga de PDF, usar un archivo de prueba menor a 10 MB y explicar la vista previa limitada.</li>
+      </ul>
+      <p>Para ejecutar las pruebas de la API: <code>npm test</code>. El paquete define pruebas de utilidad para validar archivos y vistas previas PDF; no son una prueba integral de servidor/base de datos.</p>
+    </section>
+
+    <section id="preguntas">
+      <h2>8. Preguntas probables del profesor</h2>
+      <details>
+        <summary>¿Qué hace que la API funcione y se conecte con la web?</summary>
+        <p>El servidor Express escucha en un puerto, publica rutas HTTP y CORS admite el origen del frontend configurado. La web debe apuntar a la URL de la API y respetar sus formatos de petición. Para rutas privadas debe enviar el JWT. Además, el backend necesita variables de entorno válidas y MySQL accesible.</p>
+      </details>
+      <details>
+        <summary>¿CORS conecta los dos proyectos o los autentica?</summary>
+        <p>CORS no realiza por sí solo la conexión ni identifica al usuario. Es una política que permite al navegador aceptar respuestas de un origen distinto cuando coincide con la configuración del servidor. La comunicación ocurre mediante HTTP; la autenticación se resuelve con JWT.</p>
+      </details>
+      <details>
+        <summary>¿Qué ocurre cuando el usuario inicia sesión?</summary>
+        <p>El controlador busca el email, compara la contraseña con bcrypt y, si coincide, firma un JWT con id y email. El token vence en dos horas. En el siguiente request protegido se envía en la cabecera Authorization como Bearer.</p>
+      </details>
+      <details>
+        <summary>¿Cómo evita un usuario ver los libros de otro?</summary>
+        <p>El middleware obtiene el usuario del token. Los controladores pasan ese id a los modelos y las consultas privadas incluyen <code>usuario_id = ?</code>; si el registro no pertenece a ese usuario, se devuelve 404.</p>
+      </details>
+      <details>
+        <summary>¿Por qué separar rutas, controladores y modelos?</summary>
+        <p>Las rutas describen el endpoint y los middleware; los controladores implementan el flujo HTTP, validan y coordinan; los modelos concentran las consultas a la base de datos. Esa separación facilita entender y mantener cada responsabilidad.</p>
+      </details>
+      <details>
+        <summary>¿Cómo protege las consultas SQL?</summary>
+        <p>Usa consultas parametrizadas con <code>pool.execute</code> y marcadores de posición. Los filtros se incorporan como condiciones y sus valores viajan como parámetros, en vez de concatenarse dentro del SQL.</p>
+      </details>
+      <details>
+        <summary>¿Cómo se guarda y entrega un PDF?</summary>
+        <p>Multer recibe un único archivo de hasta 10 MB en memoria; la API comprueba extensión y firma y almacena nombre y contenido mediante el modelo. Puede devolver el PDF del propietario, una vista previa recortada a 30 páginas o, para el catálogo, una descarga completa solo si se habilitó.</p>
+      </details>
+      <details>
+        <summary>¿El catálogo se puede consultar sin iniciar sesión?</summary>
+        <p>No con el código actual: <code>catalogo.routes.js</code> aplica <code>router.use(requiereAutenticacion)</code> a todas sus rutas. “Compartido” se refiere a la publicación del libro, no a que esos endpoints sean anónimos.</p>
+      </details>
+      <details>
+        <summary>¿Qué pasa si el email ya existe o el libro no se encuentra?</summary>
+        <p>Los conflictos de duplicados responden 409. Un recurso inexistente o que no pertenece al usuario se informa como 404. Las validaciones inválidas responden 400 y un token ausente o inválido responde 401.</p>
+      </details>
+      <details>
+        <summary>¿Qué variables y servicios necesita el backend?</summary>
+        <p>Necesita <code>JWT_SECRET</code> para arrancar; el pool también requiere host, usuario, contraseña y nombre de base de datos, con puerto 3306 por defecto. <code>PORT</code> y <code>FRONTEND_URL</code> tienen valores predeterminados en el código.</p>
+      </details>
+      <details>
+        <summary>¿Qué diferencia hay entre PUT y PATCH aquí?</summary>
+        <p><code>PUT /api/libros/:id</code> valida y actualiza los datos del libro; <code>PATCH /api/libros/:id/estado</code> cambia solo el estado.</p>
+      </details>
+    </section>
+  </main>
+  <footer>Guía elaborada a partir del código de <code>api/</code>. Puede abrirse en un navegador o imprimirse/guardarse como PDF.</footer>
+</body>
+</html>

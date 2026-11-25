@@ -1,0 +1,411 @@
+NOTAS DEL PROYECTO: MI BIBLIOTECA
+================================
+
+Este archivo sirve como bloc de notas para ubicar las carpetas y entender
+para qué se usa cada archivo. El inventario refleja los archivos presentes
+en el proyecto al momento de crear estas notas.
+
+IMPORTANTE
+----------
+- Los archivos .env contienen configuracion local y pueden tener contrasenas
+  o claves. No compartas su contenido ni lo publiques.
+- node_modules contiene dependencias instaladas por npm; se omite porque se
+  genera con npm install y puede ocupar mucho espacio.
+- web/dist contiene la compilacion generada del frontend. No se suele editar
+  manualmente; se vuelve a crear al compilar.
+
+
+ARBOL DEL PROYECTO
+------------------
+
+biblioteca-app/
+|-- .gitignore
+|-- GUIA_EXPOSICION.md
+|-- README.md
+|-- NOTAS_PROYECTO.txt
+|-- api/
+|   |-- .env
+|   |-- .env.example
+|   |-- package.json
+|   |-- package-lock.json
+|   `-- src/
+|       |-- app.js
+|       |-- server.js
+|       |-- config/
+|       |   `-- db.js
+|       |-- controllers/
+|       |   |-- auth.controller.js
+|       |   |-- autores.controller.js
+|       |   `-- libros.controller.js
+|       |-- middlewares/
+|       |   |-- errores.js
+|       |   |-- requiereAutenticacion.js
+|       |   `-- subirPdf.js
+|       |-- models/
+|       |   |-- autores.model.js
+|       |   |-- libros.model.js
+|       |   `-- usuarios.model.js
+|       |-- routes/
+|       |   |-- auth.routes.js
+|       |   |-- autores.routes.js
+|       |   |-- catalogo.routes.js
+|       |   `-- libros.routes.js
+|       `-- utils/
+|           |-- pdf.js
+|           |-- pdf.test.js
+|           `-- validaciones.js
+|-- database/
+|   |-- schema.sql
+|   `-- migrations/
+|       |-- 001_libros_pdf.sql
+|       |-- 002_usuarios_apellido.sql
+|       `-- 003_compartir_catalogo.sql
+`-- web/
+    |-- .env
+    |-- .env.example
+    |-- index.html
+    |-- package.json
+    |-- package-lock.json
+    |-- vite.config.js
+    |-- dist/                         (compilacion generada)
+    |   |-- index.html
+    |   `-- assets/
+    |       |-- index-CX4LNQQm.js
+    |       `-- index-D76Tf_VN.css
+    `-- src/
+        |-- App.jsx
+        |-- index.css
+        |-- main.jsx
+        |-- components/
+        |   |-- Campo.jsx
+        |   |-- FiltrosLibros.jsx
+        |   |-- FormularioLibro.jsx
+        |   |-- InsigniaEstado.jsx
+        |   |-- Layout.jsx
+        |   |-- LibroItem.jsx
+        |   |-- ListaLibros.jsx
+        |   |-- RutaProtegida.jsx
+        |   |-- VisorPdf.jsx
+        |-- constants/
+        |   `-- estados.js
+        |-- context/
+        |   `-- AuthContext.jsx
+        |-- hooks/
+        |   |-- useAutores.js
+        |   |-- useLibro.js
+        |   `-- useLibros.js
+        |-- pages/
+        |   |-- Autores.jsx
+        |   |-- Catalogo.jsx
+        |   |-- DetalleLibro.jsx
+        |   |-- Inicio.jsx
+        |   |-- Login.jsx
+        |   |-- NoEncontrada.jsx
+        |   |-- NuevoLibro.jsx
+        |   `-- Registro.jsx
+        `-- services/
+            |-- api.js
+            |-- auth.js
+            |-- autores.js
+            |-- catalogo.js
+            |-- libros.js
+            `-- sesion.js
+
+
+ARCHIVOS DE LA RAIZ
+-------------------
+
+.gitignore
+  Indica qué archivos o carpetas debe ignorar Git, por ejemplo archivos
+  locales o generados que no forman parte del codigo fuente.
+
+README.md
+  Guia general: requisitos, instalacion, configuracion, endpoints y rutas.
+
+GUIA_EXPOSICION.md
+  Resumen didactico para explicar la arquitectura y mostrar la aplicacion.
+
+NOTAS_PROYECTO.txt
+  Este archivo: inventario y resumen de carpetas y archivos.
+
+
+API: api/
+---------
+
+La API es el servidor Node.js/Express. Recibe peticiones del frontend, valida
+datos, aplica autenticacion y consulta MySQL.
+
+api/.env
+  Configuracion local de la API. Puede contener credenciales; no compartir.
+
+api/.env.example
+  Plantilla de las variables que hay que configurar en .env.
+
+api/package.json
+  Dependencias, metadatos y comandos para ejecutar o probar la API.
+
+api/package-lock.json
+  Versiones exactas de dependencias instaladas por npm.
+
+api/src/server.js
+  Inicia el servidor y lo pone a escuchar en el puerto configurado.
+
+api/src/app.js
+  Configura Express, CORS, rutas y middleware general de errores.
+
+api/src/config/db.js
+  Configura la conexion o pool de conexiones hacia MySQL.
+
+api/src/routes/
+  Define las URLs y metodos HTTP, y los conecta con sus controladores.
+
+api/src/routes/auth.routes.js
+  Rutas de registro e inicio de sesion.
+
+api/src/routes/autores.routes.js
+  Rutas para listar, crear y eliminar autores.
+
+api/src/routes/libros.routes.js
+  Rutas para operaciones sobre libros personales, incluyendo cambios de
+  estado, PDF y datos del libro.
+
+api/src/routes/catalogo.routes.js
+  Rutas para buscar y consultar las obras compartidas.
+
+api/src/controllers/
+  Recibe las peticiones, valida sus datos y prepara las respuestas HTTP.
+
+api/src/controllers/auth.controller.js
+  Implementa registro e inicio de sesion.
+
+api/src/controllers/autores.controller.js
+  Coordina las operaciones y respuestas de autores.
+
+api/src/controllers/libros.controller.js
+  Coordina las operaciones, validaciones y respuestas de libros.
+
+api/src/models/
+  Contiene las consultas a la base de datos.
+
+api/src/models/usuarios.model.js
+  Consultas relacionadas con las cuentas de usuario.
+
+api/src/models/autores.model.js
+  Consultas para los autores de cada usuario.
+
+api/src/models/libros.model.js
+  Consultas para libros, estados, PDFs y catalogo compartido.
+
+api/src/middlewares/
+  Funciones que se ejecutan durante el procesamiento de una peticion.
+
+api/src/middlewares/requiereAutenticacion.js
+  Verifica el token de autenticacion y asocia el usuario a la peticion.
+
+api/src/middlewares/subirPdf.js
+  Procesa y limita la carga de archivos PDF.
+
+api/src/middlewares/errores.js
+  Centraliza el manejo de errores de la API.
+
+api/src/utils/
+  Utilidades reutilizables para validaciones y procesamiento de PDF.
+
+api/src/utils/validaciones.js
+  Reglas de validacion usadas por la API.
+
+api/src/utils/pdf.js
+  Funciones auxiliares para procesar documentos PDF.
+
+api/src/utils/pdf.test.js
+  Pruebas automatizadas de las utilidades PDF.
+
+
+BASE DE DATOS: database/
+------------------------
+
+database/schema.sql
+  Esquema inicial de la base de datos: tablas, campos y relaciones.
+
+database/migrations/
+  Cambios incrementales para bases de datos que ya existian.
+
+database/migrations/001_libros_pdf.sql
+  Agrega soporte para almacenar PDFs de libros.
+
+database/migrations/002_usuarios_apellido.sql
+  Agrega el apellido a los datos del usuario.
+
+database/migrations/003_compartir_catalogo.sql
+  Agrega los campos necesarios para compartir libros en el catalogo.
+
+
+FRONTEND: web/
+--------------
+
+El frontend React/Vite se ejecuta en el navegador. No se conecta directamente
+a MySQL: envia peticiones HTTP a la API.
+
+web/.env
+  Configuracion local del frontend, como la URL base de la API.
+
+web/.env.example
+  Plantilla de configuracion del frontend.
+
+web/package.json
+  Dependencias del frontend y comandos de desarrollo, compilacion y vista
+  previa.
+
+web/package-lock.json
+  Versiones exactas de dependencias instaladas por npm.
+
+web/vite.config.js
+  Configura Vite, el complemento de React y el puerto de desarrollo.
+
+web/index.html
+  Documento HTML inicial. Incluye el elemento root donde React monta la app.
+
+web/dist/
+  Resultado generado de la compilacion. Los nombres de los archivos pueden
+  cambiar en cada compilacion.
+
+web/dist/index.html
+  HTML de entrada de la version compilada.
+
+web/dist/assets/
+  Recursos generados para produccion.
+
+web/dist/assets/index-CX4LNQQm.js
+  JavaScript compilado de la aplicacion en esta compilacion.
+
+web/dist/assets/index-D76Tf_VN.css
+  CSS compilado de la aplicacion en esta compilacion.
+
+
+FRONTEND: web/src/
+------------------
+
+web/src/main.jsx
+  Punto de entrada React. Configura el router, el proveedor de autenticacion,
+  monta App e importa los estilos globales.
+
+web/src/App.jsx
+  Declara las rutas y relaciona cada URL con su pagina.
+
+web/src/index.css
+  Estilos globales, componentes visuales, temas y reglas adaptables a movil.
+
+web/src/components/
+  Piezas reutilizables de interfaz.
+
+Campo.jsx
+  Campo de formulario con etiqueta, referencia y mensaje de error accesible.
+
+FiltrosLibros.jsx
+  Busqueda y filtros de la lista de libros.
+
+FormularioLibro.jsx
+  Formulario compartido para crear o editar libros, con validacion y PDF.
+
+InsigniaEstado.jsx
+  Etiqueta visual para el estado de un libro.
+
+Layout.jsx
+  Estructura comun de las paginas: navegacion, menu de cuenta, tema y pie.
+
+LibroItem.jsx
+  Presentacion de un libro y sus acciones en la lista.
+
+ListaLibros.jsx
+  Recorre los libros y dibuja un LibroItem por cada elemento.
+
+RutaProtegida.jsx
+  Impide entrar a paginas privadas sin iniciar sesion.
+
+VisorPdf.jsx
+  Ventana para ver una vista previa de PDF.
+
+web/src/constants/
+  Valores constantes que usan varias partes del frontend.
+
+estados.js
+  Valores internos y etiquetas de los estados posibles de un libro.
+
+web/src/context/
+  Estado global compartido entre componentes.
+
+AuthContext.jsx
+  Comparte el usuario y las acciones para iniciar/cerrar sesion y registrarse.
+
+web/src/hooks/
+  Hooks propios que agrupan estado y comportamiento de datos.
+
+useAutores.js
+  Carga y administra autores.
+
+useLibro.js
+  Carga y administra un libro individual.
+
+useLibros.js
+  Carga la lista de libros, filtros y acciones de la lista.
+
+web/src/pages/
+  Pantallas asociadas a las rutas de la aplicacion.
+
+Autores.jsx
+  Gestion de autores.
+
+Catalogo.jsx
+  Busqueda y consulta de libros compartidos.
+
+DetalleLibro.jsx
+  Edicion, eliminacion y consulta del PDF de un libro.
+
+Inicio.jsx
+  Listado principal, filtros y resumen de libros personales.
+
+Login.jsx
+  Formulario para iniciar sesion.
+
+NoEncontrada.jsx
+  Pantalla para una URL que no corresponde a ninguna ruta.
+
+NuevoLibro.jsx
+  Pantalla para crear un libro.
+
+Registro.jsx
+  Formulario para crear una cuenta.
+
+web/src/services/
+  Funciones de comunicacion con la API y almacenamiento de sesion.
+
+api.js
+  Punto comun para peticiones HTTP: URL, token, JSON, errores y descargas.
+
+auth.js
+  Peticiones de registro e inicio de sesion.
+
+autores.js
+  Peticiones para listar, crear y eliminar autores.
+
+catalogo.js
+  Peticiones de busqueda, vista previa y descarga del catalogo.
+
+libros.js
+  Peticiones para listar, crear, editar, eliminar y descargar libros.
+
+sesion.js
+  Lectura, guardado y eliminacion de los datos de sesion en localStorage.
+
+
+RECORRIDO GENERAL
+-----------------
+
+1. El navegador carga web/index.html.
+2. web/src/main.jsx monta React y configura los proveedores.
+3. web/src/App.jsx elige la pagina segun la ruta.
+4. La pagina usa componentes y hooks para presentar y manejar los datos.
+5. Los hooks llaman a los servicios correspondientes.
+6. web/src/services/api.js envia la peticion HTTP a la API.
+7. La API valida la peticion y consulta MySQL mediante sus modelos.
+8. La respuesta vuelve al frontend y React actualiza la pantalla.
