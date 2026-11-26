@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS libros (
   autor_id   INT NOT NULL,
   titulo     VARCHAR(200) NOT NULL,
   genero     VARCHAR(100) NULL,
-  estado     ENUM('leido', 'pendiente', 'prestado') NOT NULL DEFAULT 'pendiente',
+  estado     ENUM('leido', 'pendiente') NOT NULL DEFAULT 'pendiente',
   notas      TEXT NULL,
   pdf_nombre VARCHAR(255) NULL,
   pdf_contenido LONGBLOB NULL,

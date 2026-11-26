@@ -1,6 +1,6 @@
 # Mi biblioteca – Biblioteca personal (autores y libros)
 
-Aplicación Full-Stack para llevar el control de una biblioteca personal: cada usuario carga sus **autores** y sus **libros**, y marca el estado de cada libro (**leído**, **pendiente** o **prestado**). Cada cuenta ve y modifica **solo sus propios datos**.
+Aplicación Full-Stack para llevar el control de una biblioteca personal: cada usuario carga sus **autores** y sus **libros**, y marca cada libro como **leído** o **pendiente**. Cada cuenta ve y modifica **solo sus propios datos**.
 
 - **Base de datos:** MySQL (3 tablas relacionadas; los PDFs opcionales se guardan como `LONGBLOB` en `libros`)
 - **API REST:** Node.js + Express + mysql2, organizada en capas (rutas → controladores → modelos), con JWT y bcrypt
@@ -41,7 +41,7 @@ La segunda agrega el apellido requerido en el registro:
 cmd /c "mysql -u root -p biblioteca_personal < database\migrations\002_usuarios_apellido.sql"
 ```
 
-Si `api/.env` usa otro valor para `DB_NAME`, reemplazá `biblioteca_personal` por ese nombre en los comandos y en la instrucción `USE` al principio de la migración `003`.
+Si `api/.env` usa otro valor para `DB_NAME`, reemplazá `biblioteca_personal` por ese nombre en los comandos y en la instrucción `USE` al principio de las migraciones `003` y `004`.
 
 Los PDFs se guardan en MySQL junto con el registro del libro. Se aceptan archivos de hasta 10 MB; al editar un libro, adjuntar otro PDF reemplaza el anterior.
 Los archivos son privados por defecto. Un usuario puede publicar una obra en el catálogo si cuenta con los derechos o autorización: el resto de usuarios recibe una vista previa de hasta 30 páginas. La descarga completa se habilita aparte y solo debe activarse cuando los derechos lo permitan.
@@ -50,6 +50,12 @@ Si ya tenías la base creada antes de agregar el catálogo, aplicá también est
 
 ```powershell
 cmd /c "mysql -u root -p biblioteca_personal < database\migrations\003_compartir_catalogo.sql"
+```
+
+Si ya tenías la base creada, aplicá también esta migración una sola vez. Reasigna los libros que estaban como `prestado` a `pendiente` y quita ese estado:
+
+```powershell
+cmd /c "mysql -u root -p biblioteca_personal < database\migrations\004_quitar_estado_prestado.sql"
 ```
 
 ### 2. Configurar y levantar la API

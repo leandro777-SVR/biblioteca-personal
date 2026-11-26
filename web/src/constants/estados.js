@@ -2,7 +2,6 @@
 export const ESTADOS = [
   { valor: 'pendiente', etiqueta: 'Pendiente' },
   { valor: 'leido', etiqueta: 'Leído' },
-  { valor: 'prestado', etiqueta: 'Prestado' },
 ];
 
 export function etiquetaDeEstado(valor) {

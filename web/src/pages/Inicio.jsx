@@ -29,7 +29,6 @@ export default function Inicio() {
   const resumen = {
     leidos: libros.filter((libro) => libro.estado === 'leido').length,
     pendientes: libros.filter((libro) => libro.estado === 'pendiente').length,
-    prestados: libros.filter((libro) => libro.estado === 'prestado').length,
   };
 
   let contenido;
@@ -92,10 +91,6 @@ export default function Inicio() {
           <div className="resumen-item resumen-pendientes">
             <span className="resumen-punto" aria-hidden="true" />
             <div><strong>{resumen.pendientes}</strong><span>Pendientes</span></div>
-          </div>
-          <div className="resumen-item resumen-prestados">
-            <span className="resumen-punto" aria-hidden="true" />
-            <div><strong>{resumen.prestados}</strong><span>Prestados</span></div>
           </div>
         </div>
       )}

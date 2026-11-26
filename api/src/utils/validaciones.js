@@ -1,4 +1,4 @@
-export const ESTADOS_VALIDOS = ['leido', 'pendiente', 'prestado'];
+export const ESTADOS_VALIDOS = ['leido', 'pendiente'];
 
 // Convierte un valor a un id entero positivo, o devuelve null si no lo es.
 export function parsearId(valor) {

@@ -6,7 +6,7 @@ Orden sugerido: base de datos → API → seguridad → React → demo → pregu
 
 ## 1. Qué problema resuelve (30 segundos)
 
-"Es una biblioteca personal: cada usuario carga sus autores y sus libros, y marca si un libro está leído, pendiente o prestado. Cada usuario ve solo lo suyo."
+"Es una biblioteca personal: cada usuario carga sus autores y sus libros, y marca si un libro está leído o pendiente. Cada usuario ve solo lo suyo."
 
 Arquitectura: **React (puerto 5173) → API Express (puerto 3000) → MySQL**. React nunca habla con MySQL: si lo hiciera, las credenciales de la base quedarían en el navegador, visibles para cualquiera.
 
@@ -20,7 +20,7 @@ Tres tablas relacionadas por claves foráneas:
 
 Decisiones que conviene nombrar:
 
-- `estado` es un **ENUM** (`leido`, `pendiente`, `prestado`): MySQL rechaza cualquier otro valor.
+- `estado` es un **ENUM** (`leido`, `pendiente`): MySQL rechaza cualquier otro valor.
 - `ON DELETE CASCADE` en `usuario_id`: si se borra un usuario, se borran sus datos.
 - `ON DELETE RESTRICT` en `autor_id`: no se puede borrar un autor con libros. La API lo traduce a un **409** con un mensaje claro.
 - `UNIQUE (usuario_id, nombre)` en autores: un usuario no repite autores.

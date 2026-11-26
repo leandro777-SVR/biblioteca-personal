@@ -236,7 +236,7 @@
           <tr><td><code>GET /api/autores</code></td><td>JWT</td><td>Lista los autores del usuario autenticado.</td></tr>
           <tr><td><code>POST /api/autores</code></td><td>JWT</td><td>Crea un autor; 201 si se guardó.</td></tr>
           <tr><td><code>DELETE /api/autores/:id</code></td><td>JWT</td><td>Elimina el autor solo si es del usuario y no tiene libros; 204 si se eliminó.</td></tr>
-          <tr><td><code>GET /api/libros?buscar=&amp;estado=&amp;autor_id=</code></td><td>JWT</td><td>Lista libros propios con filtros opcionales; los estados válidos son <code>leido</code>, <code>pendiente</code> y <code>prestado</code>.</td></tr>
+          <tr><td><code>GET /api/libros?buscar=&amp;estado=&amp;autor_id=</code></td><td>JWT</td><td>Lista libros propios con filtros opcionales; los estados válidos son <code>leido</code> y <code>pendiente</code>.</td></tr>
           <tr><td><code>GET /api/libros/:id</code></td><td>JWT</td><td>Devuelve el detalle de un libro propio.</td></tr>
           <tr><td><code>POST /api/libros</code></td><td>JWT + multipart opcional</td><td>Crea un libro; el PDF viaja en el campo <code>archivo_pdf</code>.</td></tr>
           <tr><td><code>PUT /api/libros/:id</code></td><td>JWT + multipart opcional</td><td>Actualiza los datos del libro y, si llega uno, su PDF.</td></tr>
